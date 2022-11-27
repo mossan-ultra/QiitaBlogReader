@@ -9,6 +9,7 @@ import 'features/qiita/domain/usecases/timeline_read_usecase.dart';
 void main() {
   runApp(const MyApp());
 }
+//https://qiita.com/najeira/items/454462c794c35b3b600a
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Qiita Blog Viewer'),
     );
   }
 }
@@ -54,50 +55,18 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  late Timeline? _timeline = null;
+  late Timeline? _timeline;
 
-  // @override
-  // void initState() async {
-  //   super.initState();
-
-  //   setState(() async {
-  //     QiitaItemsReader reader = QiitaItemsReader();
-  //     TimelineRepository repo = TimelineRepository(reader);
-  //     TimelineReadUseCase timelineReadUseCase = TimelineReadUseCase(repo);
-  //     _timeline = await timelineReadUseCase.excute(1);
-  //   });
-  // }
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter = _timeline!.value.length;
-    });
-  }
-
-  Future<Timeline> sampleFutureFunc() async {
+  Future<Timeline> loadTimeline() async {
     QiitaItemsReader reader = QiitaItemsReader();
     TimelineRepository repo = TimelineRepository(reader);
     TimelineReadUseCase timelineReadUseCase = TimelineReadUseCase(repo);
     _timeline = await timelineReadUseCase.excute(1);
     return Future<Timeline>.value(_timeline);
-    // return Future.delayed(new Duration(seconds: 5), () {
-    //   return "completed!!";
-    // });
   }
 
   @override
   Widget build(BuildContext context) {
-    // if (_timeline == null) {
-    //   // まだinitStateが完了していない
-    //   return const CircularProgressIndicator();
-    // }
-
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -112,13 +81,31 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: FutureBuilder(
-          future: sampleFutureFunc(),
+          future: loadTimeline(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               Timeline tl = snapshot.data;
-              return Center(
-                // child: Text(snapshot.data),
-                child: QiitaPageWidget(page: tl.value[0]),
+              var length = tl.value.length;
+              return ListView.builder(
+                itemCount: tl.value.length,
+                itemBuilder: (BuildContext context, int index) {
+                  if (index == length) {
+                    //TODO: アイテム数を超えたので次のページを読み込む
+                    // _load();
+
+                    // 画面にはローディング表示しておく
+                    return Center(
+                      child: QiitaPageWidget(page: tl.value[index]),
+                    );
+                  } else if (index > length) {
+                    // ローディング表示より先は無し
+                    // return null;
+                  }
+
+                  // アイテムがあるので返す
+                  var item = tl.value[index];
+                  return QiitaPageWidget(page: item);
+                },
               );
             } else {
               return const CircularProgressIndicator();
@@ -126,11 +113,6 @@ class _MyHomePageState extends State<MyHomePage> {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

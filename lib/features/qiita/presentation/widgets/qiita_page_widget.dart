@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:html/parser.dart';
-import 'package:http/http.dart';
 import 'package:qiita_reader/features/qiita/domain/entities/page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -31,8 +29,8 @@ class QiitaPageWidget extends StatelessWidget {
         child: Image.network(
           _page.image,
           // width: 120,
-          // height: 120,
-          fit: BoxFit.contain,
+          height: 120,
+          // fit: BoxFit.contain,
           alignment: Alignment.center,
         ));
 
@@ -74,7 +72,7 @@ class QiitaPageWidget extends StatelessWidget {
                 launch(_page.url.value.path);
               }
             },
-            child: Container(
+            child: SizedBox(
               height: 120,
               width: double.infinity,
               child: image!,
