@@ -1,25 +1,26 @@
-
 import 'package:qiita_reader/features/qiita/domain/value/createat.dart';
 import 'package:qiita_reader/features/qiita/domain/value/updateAt.dart';
 import 'package:qiita_reader/features/qiita/domain/value/url.dart';
 
 import '../value/tag.dart';
 
-class Page {
+class BlogPage {
   final String id;
-  late List<Tag> _tags;
-  late CreatedAt _createdAt;
-  late UpdateAt _updateAt;
-  late URL _url;
-  late String _title;
+  late final List<Tag> _tags;
+  late final CreatedAt _createdAt;
+  late final UpdateAt _updateAt;
+  late final URL _url;
+  late final String _title;
+  late final String _image;
 
-  Page(
+  BlogPage(
       {required this.id,
       required CreatedAt createdAt,
       required UpdateAt updateAt,
       required URL url,
       required String title,
-      required List<Tag> tags}) {
+      required List<Tag> tags,
+      required String image}) {
     if (id.isEmpty) {
       throw Exception('Tag value is not empty');
     }
@@ -31,6 +32,7 @@ class Page {
     _title = title;
     _updateAt = updateAt;
     _url = url;
+    _image = image;
   }
 
   List<Tag> get tags => _tags;
@@ -38,4 +40,5 @@ class Page {
   UpdateAt get updateAt => _updateAt;
   URL get url => _url;
   String get title => _title;
+  String get image => _image;
 }

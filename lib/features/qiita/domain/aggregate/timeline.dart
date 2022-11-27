@@ -1,12 +1,12 @@
 import 'package:qiita_reader/features/qiita/domain/entities/page.dart';
 
 class Timeline {
-  late List<Page> _value;
+  late final List<BlogPage> value;
 
   Timeline() {
-    _value = [];
+    value = [];
   }
-  void add(Page page) {
-    _value.add(page);
+  void add(BlogPage page) {
+    value.add(page);
   }
 }

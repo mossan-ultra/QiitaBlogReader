@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:qiita_reader/features/qiita/domain/aggregate/timeline.dart';
+import 'package:qiita_reader/features/qiita/presentation/widgets/qiita_page_widget.dart';
+
+import 'features/qiita/data/datasources/qiitaItems.dart';
+import 'features/qiita/data/repositories/timeline_repository.dart';
+import 'features/qiita/domain/usecases/timeline_read_usecase.dart';
 
 void main() {
   runApp(const MyApp());
@@ -49,6 +55,19 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  late Timeline? _timeline = null;
+
+  // @override
+  // void initState() async {
+  //   super.initState();
+
+  //   setState(() async {
+  //     QiitaItemsReader reader = QiitaItemsReader();
+  //     TimelineRepository repo = TimelineRepository(reader);
+  //     TimelineReadUseCase timelineReadUseCase = TimelineReadUseCase(repo);
+  //     _timeline = await timelineReadUseCase.excute(1);
+  //   });
+  // }
 
   void _incrementCounter() {
     setState(() {
@@ -57,12 +76,28 @@ class _MyHomePageState extends State<MyHomePage> {
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      _counter++;
+      _counter = _timeline!.value.length;
     });
+  }
+
+  Future<Timeline> sampleFutureFunc() async {
+    QiitaItemsReader reader = QiitaItemsReader();
+    TimelineRepository repo = TimelineRepository(reader);
+    TimelineReadUseCase timelineReadUseCase = TimelineReadUseCase(repo);
+    _timeline = await timelineReadUseCase.excute(1);
+    return Future<Timeline>.value(_timeline);
+    // return Future.delayed(new Duration(seconds: 5), () {
+    //   return "completed!!";
+    // });
   }
 
   @override
   Widget build(BuildContext context) {
+    // if (_timeline == null) {
+    //   // まだinitStateが完了していない
+    //   return const CircularProgressIndicator();
+    // }
+
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -76,33 +111,19 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+        child: FutureBuilder(
+          future: sampleFutureFunc(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              Timeline tl = snapshot.data;
+              return Center(
+                // child: Text(snapshot.data),
+                child: QiitaPageWidget(page: tl.value[0]),
+              );
+            } else {
+              return const CircularProgressIndicator();
+            }
+          },
         ),
       ),
       floatingActionButton: FloatingActionButton(
