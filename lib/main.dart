@@ -59,26 +59,29 @@ class _MyHomePageState extends State<MyHomePage> {
             if (snapshot.connectionState == ConnectionState.done) {
               Timeline tl = snapshot.data;
               var length = tl.value.length;
-              return ListView.builder(
-                itemCount: tl.value.length,
-                itemBuilder: (BuildContext context, int index) {
-                  if (index == length) {
-                    //TODO: アイテム数を超えたので次のページを読み込む
-                    // _load();
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: ListView.builder(
+                  itemCount: tl.value.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    if (index == length) {
+                      //TODO: アイテム数を超えたので次のページを読み込む
+                      // _load();
 
-                    // 画面にはローディング表示しておく
-                    return Center(
-                      child: QiitaPageWidget(page: tl.value[index]),
-                    );
-                  } else if (index > length) {
-                    // ローディング表示より先は無し
-                    // return null;
-                  }
+                      // 画面にはローディング表示しておく
+                      return Center(
+                        child: QiitaPageWidget(page: tl.value[index]),
+                      );
+                    } else if (index > length) {
+                      // ローディング表示より先は無し
+                      // return null;
+                    }
 
-                  // アイテムがあるので返す
-                  var item = tl.value[index];
-                  return QiitaPageWidget(page: item);
-                },
+                    // アイテムがあるので返す
+                    var item = tl.value[index];
+                    return QiitaPageWidget(page: item);
+                  },
+                ),
               );
             } else {
               return const CircularProgressIndicator();

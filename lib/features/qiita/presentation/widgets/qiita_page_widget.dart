@@ -14,8 +14,11 @@ class QiitaPageWidget extends StatelessWidget {
     title = Text(
       _page.title,
       overflow: TextOverflow.ellipsis,
-      maxLines: 1,
-      style: const TextStyle(fontSize: 13),
+      maxLines: 2,
+      style: const TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.bold,
+      ),
     );
     description = Text(
       _page.title ?? '',
@@ -28,9 +31,6 @@ class QiitaPageWidget extends StatelessWidget {
             topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),
         child: Image.network(
           _page.image,
-          // width: 120,
-          height: 120,
-          // fit: BoxFit.contain,
           alignment: Alignment.center,
         ));
   }
@@ -46,10 +46,19 @@ class QiitaPageWidget extends StatelessWidget {
                 launch(_page.url.value.path);
               }
             },
-            child: SizedBox(
-              height: 120,
-              width: double.infinity,
-              child: image!,
+            child: Column(
+              children: [
+                const SizedBox(height: 40),
+                SizedBox(
+                  width: double.infinity,
+                  child: image!,
+                ),
+                const SizedBox(height: 10),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: title,
+                ),
+              ],
             ),
           )
         : const SizedBox();
