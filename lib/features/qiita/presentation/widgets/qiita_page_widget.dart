@@ -33,32 +33,6 @@ class QiitaPageWidget extends StatelessWidget {
           // fit: BoxFit.contain,
           alignment: Alignment.center,
         ));
-
-    // // HTMLパッケージでHTMLタグとして認識
-    // var document = parse(response.body);
-    // var metas = document.head!.getElementsByTagName('meta');
-    // for (var meta in metas) {
-    //   // metaタグの中からname属性がdescriptionであるものを探す
-    //   if (meta.attributes['name'] == 'description') {
-    //     description = Text(
-    //       _page.title ?? '',
-    //       overflow: TextOverflow.ellipsis,
-    //       maxLines: 3,
-    //       style: const TextStyle(fontSize: 12),
-    //     );
-    //     // metaタグの中からproperty属性がog:imageであるものを探す
-    //   } else if (meta.attributes['property'] == 'og:image') {
-    //     image = ClipRRect(
-    //       borderRadius: const BorderRadius.only(
-    //           topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),
-    //       child: Image.network(
-    //         _page.image,
-    //         width: 120,
-    //         height: 120,
-    //         fit: BoxFit.cover,
-    //         alignment: Alignment.center,
-    //       ),
-    //     );
   }
 
   @override
