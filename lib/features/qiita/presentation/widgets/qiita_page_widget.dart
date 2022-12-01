@@ -53,7 +53,7 @@ class QiitaPageWidget extends StatelessWidget {
                   width: double.infinity,
                   child: image!,
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 100),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: title,
