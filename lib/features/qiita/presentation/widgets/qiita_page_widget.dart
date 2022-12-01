@@ -48,7 +48,7 @@ class QiitaPageWidget extends StatelessWidget {
             },
             child: Column(
               children: [
-                const SizedBox(height: 40),
+                const SizedBox(height: 100),
                 SizedBox(
                   width: double.infinity,
                   child: image!,
