@@ -33,24 +33,22 @@ class _BlogScrollPage extends State<BlogScrollPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: FutureBuilder(
-          future: _getContents(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            }
-            if (snapshot.hasError) {
-              return Text('${snapshot.error}');
-            }
-            //4
-            return InfinityBlogListView(
-              contents: _contents,
-              getContents: _getContents,
-            );
-          },
-        ),
+    return Center(
+      child: FutureBuilder(
+        future: _getContents(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          }
+          if (snapshot.hasError) {
+            return Text('${snapshot.error}');
+          }
+          //4
+          return InfinityBlogListView(
+            contents: _contents,
+            getContents: _getContents,
+          );
+        },
       ),
     );
   }

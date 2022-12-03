@@ -34,8 +34,20 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: BlogScrollPage(),
-    );
+    return MaterialApp(
+        home: Scaffold(
+            drawer: Drawer(
+              child: ListView(
+                children: const [
+                  DrawerHeader(
+                      decoration: BoxDecoration(color: Colors.yellowAccent),
+                      child: Text("My Home Page")),
+                  ListTile(title: Text("menu1")),
+                  ListTile(title: Text("menu2")),
+                  ListTile(title: Text("menu3"))
+                ],
+              ),
+            ),
+            body: BlogScrollPage()));
   }
 }
