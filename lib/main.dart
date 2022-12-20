@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:qiita_reader/features/qiita/domain/aggregate/timeline.dart';
-import 'package:qiita_reader/features/qiita/presentation/widgets/qiita_page_widget.dart';
-
-import 'features/qiita/data/datasources/qiitaItems.dart';
-import 'features/qiita/data/repositories/timeline_repository.dart';
-import 'features/qiita/domain/usecases/timeline_read_usecase.dart';
+import 'package:provider/provider.dart';
+import 'features/qiita/presentation/Notifier/SettingsState.dart';
 import 'features/qiita/presentation/widgets/blog_scroll_listview_widget.dart';
+import 'features/qiita/presentation/widgets/drawer.dart';
 
 void main() {
   runApp(const MyApp());
@@ -34,20 +31,17 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
-            drawer: Drawer(
-              child: ListView(
-                children: const [
-                  DrawerHeader(
-                      decoration: BoxDecoration(color: Colors.yellowAccent),
-                      child: Text("My Home Page")),
-                  ListTile(title: Text("menu1")),
-                  ListTile(title: Text("menu2")),
-                  ListTile(title: Text("menu3"))
-                ],
+    final SettingsState settingsState = SettingsState();
+
+    return ChangeNotifierProvider<SettingsState>(
+      create: (context) => SettingsState(),
+      child: MaterialApp(
+          home: Scaffold(
+              appBar: AppBar(),
+              drawer: const Drawer(
+                child: DrawerMenu(),
               ),
-            ),
-            body: BlogScrollPage()));
+              body: const BlogScrollPage())),
+    );
   }
 }

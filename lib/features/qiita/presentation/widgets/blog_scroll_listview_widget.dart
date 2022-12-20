@@ -108,7 +108,6 @@ class _InfinityBlogListView extends State<InfinityBlogListView> {
         color: Colors.grey,
       ),
       itemBuilder: (BuildContext context, int index) {
-        //11
         if (widget.contents.length == index) {
           return const SizedBox(
             height: 50,
