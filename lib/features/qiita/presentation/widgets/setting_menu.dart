@@ -11,37 +11,19 @@ class SettingMenuPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final fromPlatform = useMemoized(PackageInfo.fromPlatform);
-    // final snapshot = useFuture(fromPlatform);
-    // if (!snapshot.hasData) {
-    //   return const SizedBox.shrink();
-    // }
-
     return SettingsList(
       sections: [
         SettingsSection(
-          title: const Text('設定画面'),
-          tiles: <SettingsTile>[
-            SettingsTile.navigation(
-              leading: Icon(Icons.language),
-              title: const Text('Language'),
-              value: const Text('Japanese'),
-              description: const Text('description'),
-              onPressed: (BuildContext context) {},
-            ),
-          ],
-        ),
-        SettingsSection(
-          title: Text('General'),
+          title: const Text('General settings'),
           tiles: [
             SettingsTile.navigation(
-              title: Text('Abstract settings screen'),
-              leading: Icon(CupertinoIcons.wrench),
-              description: Text('UI created to show plugin\'s possibilities'),
+              title: const Text('Search Keyword'),
+              leading: const Icon(CupertinoIcons.keyboard),
+              description: const Text('Setting keywords to search'),
               onPressed: (context) {
                 Navigation.navigateTo(
                   context: context,
-                  screen: KeywordInputMenu(
+                  screen: const KeywordInputMenu(
                     key: Key('key'),
                   ),
                   style: NavigationRouteStyle.material,
@@ -50,15 +32,6 @@ class SettingMenuPage extends StatelessWidget {
             )
           ],
         ),
-        // SettingsSection(
-        //   title: const Text('セクション'),
-        //   tiles: <SettingsTile>[
-        //     SettingsTile(
-        //         leading: const Icon(Icons.info),
-        //         title: const Text('アプリのバージョン'),
-        //         value: Text("${snapshot.data?.version}"))
-        //   ],
-        // ),
       ],
     );
   }

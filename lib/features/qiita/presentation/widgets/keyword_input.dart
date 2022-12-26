@@ -11,15 +11,6 @@ class KeywordInputMenu extends StatefulWidget {
 }
 
 class _KeywordInputMenu extends State<KeywordInputMenu> {
-  List<String> _keyword = ['react', 'AWS'];
-  int _currentIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
-
   void textOnSubmit(String text) {
     Provider.of<SettingsState>(context, listen: false).AddKeyword(text);
   }
@@ -37,7 +28,7 @@ class _KeywordInputMenu extends State<KeywordInputMenu> {
               enabled: true,
               // 入力数
               maxLength: 10,
-              style: TextStyle(color: Colors.red),
+              style: const TextStyle(color: Colors.red),
               obscureText: false,
               maxLines: 1,
               onSubmitted: (String str) {
@@ -65,16 +56,16 @@ class _KeywordInputMenu extends State<KeywordInputMenu> {
             )
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'add'),
-        ],
-        currentIndex: _currentIndex,
-        fixedColor: Colors.blueAccent,
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
-      ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   items: const <BottomNavigationBarItem>[
+      //     BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+      //     BottomNavigationBarItem(icon: Icon(Icons.add), label: 'add'),
+      //   ],
+      //   currentIndex: _currentIndex,
+      //   fixedColor: Colors.blueAccent,
+      //   onTap: _onItemTapped,
+      //   type: BottomNavigationBarType.fixed,
+      // ),
     );
   }
 }

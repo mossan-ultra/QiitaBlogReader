@@ -1,10 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:qiita_reader/features/qiita/data/datasources/qiitaItems.dart';
 import 'package:qiita_reader/features/qiita/data/repositories/timeline_repository.dart';
 import 'package:qiita_reader/features/qiita/domain/aggregate/timeline.dart';
 import 'package:qiita_reader/features/qiita/domain/entities/page.dart';
 import 'package:qiita_reader/features/qiita/domain/usecases/timeline_read_usecase.dart';
 import 'package:qiita_reader/features/qiita/presentation/widgets/qiita_page_widget.dart';
+
+import '../Notifier/SettingsState.dart';
 
 class BlogScrollPage extends StatefulWidget {
   const BlogScrollPage({Key? key}) : super(key: key);
@@ -13,21 +18,46 @@ class BlogScrollPage extends StatefulWidget {
   State<BlogScrollPage> createState() => _BlogScrollPage();
 }
 
+class BlogPageContext {
+  List<BlogPage> contents = [];
+  int currentLoadLength = 0;
+  int totalLoadLength = 0;
+
+  BlogPageContext({
+    required this.contents,
+    required this.currentLoadLength,
+    required this.totalLoadLength,
+  });
+}
+
 class _BlogScrollPage extends State<BlogScrollPage> {
-  final List<BlogPage> _contents = [];
-  final int loadLength = 20;
+  List<BlogPage> contents = [];
+  int loadLength = 0;
+  int currentLoadLength = 0;
 
   int _page = 1;
   late Timeline? _timeline;
 
-  Future<void> _getContents() async {
+  Future<void> _getContents(BuildContext context) async {
+    List<String> filterKeywordList = context.read<SettingsState>().keywordList;
+
     QiitaItemsReader reader = QiitaItemsReader();
     TimelineRepository repo = TimelineRepository(reader);
     TimelineReadUseCase timelineReadUseCase = TimelineReadUseCase(repo);
-    _timeline = await timelineReadUseCase.excute(_page);
-    for (int i = 0; i < _timeline!.value.length; i++) {
-      _contents.add(_timeline!.value[i]);
+    try {
+      _timeline =
+          await timelineReadUseCase.excuteOnFilter(_page, filterKeywordList);
+    } on Exception catch (exception) {
+      {
+        print('exception $exception');
+      }
     }
+    for (int i = 0; i < _timeline!.value.length; i++) {
+      contents.add(_timeline!.value[i]);
+    }
+    currentLoadLength = _timeline!.value.length;
+
+    loadLength += _timeline!.value.length;
     _page++;
   }
 
@@ -35,7 +65,7 @@ class _BlogScrollPage extends State<BlogScrollPage> {
   Widget build(BuildContext context) {
     return Center(
       child: FutureBuilder(
-        future: _getContents(),
+        future: _getContents(context),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const CircularProgressIndicator();
@@ -43,10 +73,13 @@ class _BlogScrollPage extends State<BlogScrollPage> {
           if (snapshot.hasError) {
             return Text('${snapshot.error}');
           }
-          //4
           return InfinityBlogListView(
-            contents: _contents,
+            contents: BlogPageContext(
+                contents: contents,
+                currentLoadLength: currentLoadLength,
+                totalLoadLength: loadLength),
             getContents: _getContents,
+            buildContext: context,
           );
         },
       ),
@@ -55,12 +88,13 @@ class _BlogScrollPage extends State<BlogScrollPage> {
 }
 
 class InfinityBlogListView extends StatefulWidget {
-  final List<BlogPage> contents;
-  // final List<String> contents;
-  final Future<void> Function() getContents;
+  final BlogPageContext contents;
+  final BuildContext buildContext;
+  final Future<void> Function(BuildContext context) getContents;
 
   const InfinityBlogListView({
     Key? key,
+    required this.buildContext,
     required this.contents,
     required this.getContents,
   }) : super(key: key);
@@ -81,7 +115,7 @@ class _InfinityBlogListView extends State<InfinityBlogListView> {
           !_isLoading) {
         _isLoading = true;
 
-        await widget.getContents();
+        await widget.getContents(widget.buildContext);
 
         setState(() {
           _isLoading = false;
@@ -101,14 +135,17 @@ class _InfinityBlogListView extends State<InfinityBlogListView> {
   Widget build(BuildContext context) {
     return ListView.separated(
       controller: _scrollController,
-      itemCount: widget.contents.length + 1,
+      itemCount: widget.contents.contents.length + 1,
       separatorBuilder: (BuildContext context, int index) => Container(
         width: double.infinity,
         height: 2,
         color: Colors.grey,
       ),
       itemBuilder: (BuildContext context, int index) {
-        if (widget.contents.length == index) {
+        if (widget.contents.contents.length == index) {
+          if (widget.contents.totalLoadLength < 10) {
+            widget.getContents(context);
+          }
           return const SizedBox(
             height: 50,
             width: 50,
@@ -118,7 +155,7 @@ class _InfinityBlogListView extends State<InfinityBlogListView> {
           );
         }
         return Center(
-          child: QiitaPageWidget(page: widget.contents[index]),
+          child: QiitaPageWidget(page: widget.contents.contents[index]),
         );
       },
     );

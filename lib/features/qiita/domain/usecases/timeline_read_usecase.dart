@@ -8,7 +8,14 @@ class TimelineReadUseCase implements TimelineReadUseCaseInterface {
   TimelineReadUseCase(this._timelineRepository);
   @override
   Future<Timeline> excute(int page) async {
-    Timeline timeline = await _timelineRepository.readTimeLine();
+    Timeline timeline = await _timelineRepository.readTimeLine(page);
+
+    return Future<Timeline>.value(timeline);
+  }
+
+  Future<Timeline> excuteOnFilter(int page, List<String> filterKeywords) async {
+    Timeline timeline =
+        await _timelineRepository.readTimeLineOnFilter(page, filterKeywords);
 
     return Future<Timeline>.value(timeline);
   }

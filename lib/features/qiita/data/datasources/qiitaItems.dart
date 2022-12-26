@@ -32,10 +32,13 @@ class QiitaItemsReader implements QiitaItemsReaderInterface {
   }
 
   @override
-  Future<List> read(int page) async {
+  Future<List> read(int page, List<String> filterKeywords) async {
     try {
-      var response = await http
-          .get(Uri.parse('https://qiita.com/api/v2/items?page=$page'));
+      final query = 'tag:${filterKeywords.join(",")}';
+      String url =
+          'https://qiita.com/api/v2/items?per_page=20&query=$query&page=$page';
+      final uri = Uri.encodeFull(url);
+      var response = await http.get(Uri.parse(uri));
       var jsonResponse = _response(response);
       return Future<List>.value(jsonResponse);
     } on SocketException catch (socketException) {
